@@ -1,0 +1,212 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Windows 7 Color Palette */
+    --background: 210 100% 97%;
+    --foreground: 210 50% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 50% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 50% 10%;
+
+    /* Windows 7 Blue Theme */
+    --primary: 210 100% 40%;
+    --primary-foreground: 0 0% 100%;
+    --primary-dark: 210 100% 25%;
+    --primary-light: 210 100% 80%;
+
+    --secondary: 210 30% 95%;
+    --secondary-foreground: 210 50% 10%;
+
+    --muted: 210 20% 95%;
+    --muted-foreground: 210 20% 45%;
+
+    --accent: 210 100% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 30% 85%;
+    --input: 210 30% 90%;
+    --ring: 210 100% 50%;
+
+    --radius: 0.25rem;
+
+    /* Windows 7 Specific */
+    --win7-glass: 210 100% 94% / 0.7;
+    --win7-taskbar: 210 25% 25% / 0.9;
+    --win7-start: 210 100% 40%;
+    --win7-window-border: 210 100% 50%;
+    --win7-window-shadow: 210 50% 20% / 0.3;
+    --win7-hover: 210 100% 90%;
+    --win7-active: 210 100% 85%;
+
+    /* Typography */
+    --font-segoe: 'Segoe UI', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+    /* Animations */
+    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-window: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-segoe);
+    overflow: hidden;
+    cursor: default;
+    user-select: none;
+  }
+
+  /* Windows 7 Cursor */
+  * {
+    cursor: default;
+  }
+
+  button, a, [role="button"] {
+    cursor: pointer;
+  }
+
+  input, textarea {
+    cursor: text;
+  }
+}
+
+@layer components {
+  /* Windows 7 Aero Glass Effect */
+  .win7-glass {
+    background: linear-gradient(to bottom, 
+      hsla(var(--win7-glass)), 
+      hsla(210 100% 92% / 0.6)
+    );
+    backdrop-filter: blur(20px);
+    border: 1px solid hsla(0 0% 100% / 0.3);
+    box-shadow: 
+      0 0 0 1px hsla(0 0% 100% / 0.2) inset,
+      0 8px 32px hsla(var(--win7-window-shadow));
+  }
+
+  /* Taskbar Glass */
+  .taskbar-glass {
+    background: linear-gradient(to top,
+      hsla(var(--win7-taskbar)),
+      hsla(210 25% 30% / 0.85)
+    );
+    backdrop-filter: blur(30px);
+    border-top: 1px solid hsla(0 0% 100% / 0.1);
+  }
+
+  /* Window Title Bar */
+  .window-titlebar {
+    background: linear-gradient(to bottom,
+      hsla(210 100% 50% / 0.95),
+      hsla(210 100% 40% / 0.95)
+    );
+  }
+
+  /* Start Button */
+  .start-button {
+    background: linear-gradient(to bottom,
+      hsla(210 100% 50%),
+      hsla(210 100% 40%)
+    );
+    border: 1px solid hsla(210 100% 25%);
+    box-shadow: 
+      0 0 0 1px hsla(0 0% 100% / 0.2) inset,
+      0 2px 6px hsla(0 0% 0% / 0.4);
+    border-radius: 6px;
+  }
+
+  .start-button:hover {
+    background: linear-gradient(to bottom,
+      hsla(210 100% 55%),
+      hsla(210 100% 45%)
+    );
+    box-shadow: 
+      0 0 0 1px hsla(0 0% 100% / 0.3) inset,
+      0 2px 8px hsla(0 0% 0% / 0.5);
+  }
+
+  .start-button:active {
+    background: linear-gradient(to bottom,
+      hsla(210 100% 35%),
+      hsla(210 100% 45%)
+    );
+  }
+
+  /* Desktop Icon */
+  .desktop-icon {
+    transition: var(--transition-smooth);
+  }
+
+  .desktop-icon:hover {
+    background: hsla(0 0% 100% / 0.1);
+    backdrop-filter: blur(10px);
+  }
+
+  .desktop-icon.selected {
+    background: hsla(210 100% 50% / 0.3);
+    border: 1px solid hsla(210 100% 50% / 0.5);
+  }
+
+  /* Window animations */
+  @keyframes windowOpen {
+    from {
+      transform: scale(0.95) translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes windowClose {
+    from {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: scale(0.95) translateY(20px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes minimizeToTaskbar {
+    from {
+      transform: scale(1);
+      opacity: 1;
+    }
+    to {
+      transform: scale(0.1) translateY(100vh);
+      opacity: 0;
+    }
+  }
+
+  .window-open {
+    animation: windowOpen 0.2s ease-out;
+  }
+
+  .window-close {
+    animation: windowClose 0.2s ease-out;
+  }
+
+  .window-minimize {
+    animation: minimizeToTaskbar 0.3s ease-out;
+  }
+}
