@@ -133,7 +133,13 @@ const Desktop = () => {
       onContextMenu={handleContextMenu}
     >
       {/* Desktop Icons */}
-      <div className="absolute top-4 left-4 grid gap-4">
+      <div
+        className="absolute top-2 left-2 right-2 sm:top-4 sm:left-4 sm:right-auto grid gap-3 sm:gap-4"
+        style={{
+          gridTemplateColumns: "repeat(auto-fill, minmax(4.5rem, 1fr))",
+          maxWidth: "min(100%, 18rem)",
+        }}
+      >
         {desktopIcons.map((icon) => (
           <DesktopIcon
             key={icon.id}
@@ -151,7 +157,7 @@ const Desktop = () => {
         let content;
         switch (window.type) {
           case "mail":
-            content = <MailWindow />;
+            content = <MailWindow onSent={() => closeWindow(window.id)} />;
             break;
           case "blog":
             content = <BlogWindow />;

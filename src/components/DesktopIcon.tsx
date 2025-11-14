@@ -70,16 +70,25 @@ const DesktopIcon = ({ iconSrc, label, onDoubleClick }: DesktopIconProps) => {
     }, 300);
   };
 
+  const handleKeyUp: React.KeyboardEventHandler<HTMLButtonElement> = (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      onDoubleClick();
+    }
+  };
+
   return (
     <button
-      className={`desktop-icon flex flex-col items-center gap-1 p-3 rounded w-24 ${
+      className={`desktop-icon flex flex-col items-center gap-1 p-2 sm:p-3 rounded w-20 sm:w-24 ${
         isSelected ? "selected" : ""
       }`}
       onClick={handleClick}
       onBlur={() => setIsSelected(false)}
+      onKeyUp={handleKeyUp}
+      role="button"
+      aria-label={label}
     >
-      <img src={processedSrc} alt={label} className="w-12 h-12 drop-shadow-lg" />
-      <span className="text-white text-xs text-center drop-shadow-md font-medium">
+      <img src={processedSrc} alt={label} className="w-10 h-10 sm:w-12 sm:h-12 drop-shadow-lg" />
+      <span className="text-white text-[11px] sm:text-xs text-center drop-shadow-md font-medium">
         {label}
       </span>
     </button>

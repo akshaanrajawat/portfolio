@@ -209,4 +209,63 @@ All colors MUST be HSL.
   .window-minimize {
     animation: minimizeToTaskbar 0.3s ease-out;
   }
+
+  /* Windows XP Alert Toast */
+  .xp-alert {
+    position: relative;
+    background-color: #f0f0f0; /* beige-grey */
+    border: 1px solid #0053e9;
+    border-radius: 2px;
+    box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    font-family: Tahoma, "MS Sans Serif", sans-serif;
+  }
+  .xp-alert .grid { padding: 0; }
+  .xp-alert .grid > :first-child {
+    /* Title bar area maps to ToastTitle */
+    background: linear-gradient(to right, #0053e9, #0045d4 80%, #0a52f3 100%);
+    color: white;
+    font-weight: bold;
+    padding: 4px 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+  .xp-alert .grid > :nth-child(2) {
+    /* Body area maps to ToastDescription */
+    padding: 16px 12px;
+    background: #f0f0f0;
+  }
+  .xp-alert [toast-close] {
+    background-color: #e1260d;
+    color: white;
+    border: 1px solid #fff;
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 16px;
+    border-radius: 2px;
+  }
+  .xp-alert [toast-close]:hover { background-color: #ff5a3f; }
+
+  /* Classic 3D 'OK' Button */
+  .xp-alert-ok {
+    background-color: #f0f0f0;
+    border-width: 1px;
+    border-style: outset;
+    border-color: #dcdcdc #808080 #808080 #dcdcdc;
+    padding: 4px 12px;
+    min-width: 70px;
+    font-family: Tahoma, sans-serif;
+    font-size: 11px;
+    cursor: pointer;
+  }
+  .xp-alert-ok:focus {
+    outline: 1px dotted #000;
+    outline-offset: -3px;
+    border-color: #0053e9;
+  }
+  .xp-alert-ok:active { border-style: inset; }
 }

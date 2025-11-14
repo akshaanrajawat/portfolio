@@ -20,10 +20,15 @@ const Window = ({ id, title, children, onClose, onMinimize, onFocus, zIndex }: W
   const windowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Center window on screen
-    const centerX = (window.innerWidth - size.width) / 2;
-    const centerY = (window.innerHeight - size.height - 48) / 2; // 48px for taskbar
-    setPosition({ x: Math.max(0, centerX), y: Math.max(0, centerY) });
+    // Responsive initial size and centering
+    const isMobile = window.innerWidth <= 640;
+    const isTablet = window.innerWidth > 640 && window.innerWidth <= 1024;
+    const desiredWidth = isMobile ? Math.round(window.innerWidth * 0.92) : isTablet ? Math.min(820, Math.round(window.innerWidth * 0.85)) : 800;
+    const desiredHeight = isMobile ? Math.round(window.innerHeight * 0.7) : isTablet ? Math.min(700, Math.round(window.innerHeight * 0.75)) : 600;
+    setSize({ width: desiredWidth, height: desiredHeight });
+    const centerX = Math.max(0, (window.innerWidth - desiredWidth) / 2);
+    const centerY = Math.max(0, (window.innerHeight - desiredHeight - 48) / 2);
+    setPosition({ x: centerX, y: centerY });
   }, []);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -34,11 +39,41 @@ const Window = ({ id, title, children, onClose, onMinimize, onFocus, zIndex }: W
     }
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    if (!touch) return;
+    const target = e.target as HTMLElement;
+    if (target === e.currentTarget || target.closest(".window-titlebar")) {
+      setIsDragging(true);
+      setDragStart({ x: touch.clientX - position.x, y: touch.clientY - position.y });
+      onFocus();
+    }
+  };
+
+  const clampWithinViewport = (nextX: number, nextY: number) => {
+    const maxX = Math.max(0, window.innerWidth - size.width);
+    const taskbarHeight = 48;
+    const bottomPadding = 32; // keep a little margin
+    const maxY = Math.max(0, window.innerHeight - taskbarHeight - bottomPadding);
+    return {
+      x: Math.max(0, Math.min(nextX, maxX)),
+      y: Math.max(0, Math.min(nextY, maxY)),
+    };
+  };
+
   const handleMouseMove = (e: MouseEvent) => {
     if (isDragging) {
-      const newX = Math.max(0, Math.min(e.clientX - dragStart.x, window.innerWidth - size.width));
-      const newY = Math.max(0, Math.min(e.clientY - dragStart.y, window.innerHeight - 48 - 32));
-      setPosition({ x: newX, y: newY });
+      const next = clampWithinViewport(e.clientX - dragStart.x, e.clientY - dragStart.y);
+      setPosition(next);
+    }
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (isDragging) {
+      const touch = e.touches[0];
+      if (!touch) return;
+      const next = clampWithinViewport(touch.clientX - dragStart.x, touch.clientY - dragStart.y);
+      setPosition(next);
     }
   };
 
@@ -51,12 +86,16 @@ const Window = ({ id, title, children, onClose, onMinimize, onFocus, zIndex }: W
     if (isDragging) {
       window.addEventListener("mousemove", handleMouseMove);
       window.addEventListener("mouseup", handleMouseUp);
+      window.addEventListener("touchmove", handleTouchMove, { passive: false });
+      window.addEventListener("touchend", handleMouseUp);
       return () => {
         window.removeEventListener("mousemove", handleMouseMove);
         window.removeEventListener("mouseup", handleMouseUp);
+        window.removeEventListener("touchmove", handleTouchMove as any);
+        window.removeEventListener("touchend", handleMouseUp);
       };
     }
-  }, [isDragging, dragStart, position]);
+  }, [isDragging, dragStart, position, size]);
 
   return (
     <div
@@ -70,11 +109,13 @@ const Window = ({ id, title, children, onClose, onMinimize, onFocus, zIndex }: W
         zIndex,
       }}
       onMouseDown={() => onFocus()}
+      onTouchStart={handleTouchStart}
     >
       {/* Title Bar */}
       <div
         className="window-titlebar h-8 flex items-center justify-between px-2 cursor-move"
         onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
       >
         <span className="text-white text-sm font-medium select-none">{title}</span>
         <div className="flex items-center gap-1">

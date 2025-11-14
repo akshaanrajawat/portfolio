@@ -49,6 +49,14 @@ const projects = [
     tech: ["React", "TypeScript", "Vite", "Tailwind CSS", "Radix UI", "shadcn/ui"],
     year: "2025",
   },
+  {
+    id: 7,
+    title: "Networth Calculator",
+    description:
+      "Networth Calculator: A React app to calculate networth using real-time data from CryptoAPI and NSE BSE API",
+    tech: ["React", "TypeScript", "NSE BSE API", "CryptoAPI"],
+    year: "2025",
+  },
 ];
 
 const ProjectsWindow = () => {

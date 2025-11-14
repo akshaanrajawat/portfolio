@@ -1,9 +1,68 @@
-import { Send } from "lucide-react";
+import { Send, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
-const MailWindow = () => {
+interface MailWindowProps {
+  onSent: () => void;
+}
+
+const MailWindow = ({ onSent }: MailWindowProps) => {
+  const { toast, dismiss } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      const res = await fetch("https://formsubmit.co/akshaanrajawat@gmail.com", {
+        method: "POST",
+        body: formData,
+        headers: { Accept: "application/json" },
+      });
+
+      if (!res.ok) throw new Error("Failed to send");
+
+      const created = toast({
+        title: "Mail sent",
+        description: (
+          <div className="flex items-center gap-3 p-4 text-black">
+            <AlertTriangle className="w-5 h-5 text-yellow-600 shrink-0" />
+            <span>Will get back to you soon.</span>
+          </div>
+        ),
+        className: "xp-alert p-0 w-[320px]",
+        duration: 60000,
+      });
+
+      created.update({
+        id: created.id,
+        action: (
+          <ToastAction altText="OK" asChild>
+            <button
+              className="mx-auto mb-3 px-4 py-1 xp-alert-ok"
+              onClick={() => dismiss(created.id)}
+            >
+              OK
+            </button>
+          </ToastAction>
+        ),
+      });
+
+      form.reset();
+      onSent();
+    } catch (err) {
+      toast({
+        title: "Mail failed",
+        description: "Please try again in a moment.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    }
+  };
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <div className="mb-6">
@@ -13,11 +72,7 @@ const MailWindow = () => {
         </p>
       </div>
 
-      <form
-        action="https://formsubmit.co/akshaanrajawat@gmail.com"
-        method="POST"
-        className="space-y-4"
-      >
+      <form onSubmit={handleSubmit} method="POST" className="space-y-4">
         {/* Hidden configuration for FormSubmit */}
         <input type="hidden" name="_captcha" value="false" />
         <input type="hidden" name="_template" value="table" />
@@ -29,7 +84,7 @@ const MailWindow = () => {
         <input
           type="hidden"
           name="_next"
-          value="https://yourwebsite.com/thankyou"
+          value="https://akshaan-portfolio.vercel.app/"
         />
 
         {/* Form Fields */}
@@ -53,9 +108,9 @@ const MailWindow = () => {
           />
         </div>
 
-        <Button type="submit" className="w-full">
-          <Send className="w-4 h-4 mr-2" /> Send Message
-        </Button>
+      <Button type="submit" className="w-full">
+        <Send className="w-4 h-4 mr-2" /> Send Message
+      </Button>
       </form>
     </div>
   );
